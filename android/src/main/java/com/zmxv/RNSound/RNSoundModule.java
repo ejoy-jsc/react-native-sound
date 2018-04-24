@@ -2,11 +2,12 @@ package com.zmxv.RNSound;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.net.Uri;
-import android.media.AudioManager;
+import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -19,11 +20,11 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.ExceptionsManagerModule;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.io.IOException;
+import java.util.Set;
 
-import android.util.Log;
 
 public class RNSoundModule extends ReactContextBaseJavaModule implements AudioManager.OnAudioFocusChangeListener {
   Map<Double, MediaPlayer> playerPool = new HashMap<>();
@@ -59,6 +60,7 @@ public class RNSoundModule extends ReactContextBaseJavaModule implements AudioMa
       WritableMap e = Arguments.createMap();
       e.putInt("code", -1);
       e.putString("message", "resource not found");
+      callback.invoke(e, NULL);
       return;
     }
     this.playerPool.put(key, player);
@@ -435,5 +437,34 @@ public class RNSoundModule extends ReactContextBaseJavaModule implements AudioMa
     final Map<String, Object> constants = new HashMap<>();
     constants.put("IsAndroid", true);
     return constants;
+  }
+
+  /**
+   * Ensure any audios that are playing when app exits are stopped and released
+   */
+  @Override
+  public void onCatalystInstanceDestroy() {
+    super.onCatalystInstanceDestroy();
+
+    Set<Map.Entry<Integer, MediaPlayer>> entries = playerPool.entrySet();
+    for (Map.Entry<Integer, MediaPlayer> entry : entries) {
+      MediaPlayer mp = entry.getValue();
+      if (mp == null) {
+        continue;
+      }
+      try {
+        mp.setOnCompletionListener(null);
+        mp.setOnPreparedListener(null);
+        mp.setOnErrorListener(null);
+        if (mp.isPlaying()) {
+          mp.stop();
+        }
+        mp.reset();
+        mp.release();
+      } catch (Exception ex) {
+        Log.e("RNSoundModule", "Exception when closing audios during app exit. ", ex);
+      }
+    }
+    entries.clear();
   }
 }

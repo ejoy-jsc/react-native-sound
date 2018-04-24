@@ -126,17 +126,16 @@ Sound.prototype.reset = function() {
 };
 
 Sound.prototype.release = function() {
-  if (this._loaded) {
-    RNSound.release(this._key);
-    this._loaded = false;
-    if (!IsWindows) {
-      if (this.onPlaySubscription != null) {
-        this.onPlaySubscription.remove();
-        this.onPlaySubscription = null;
-      }
+
+  RNSound.release(this._key);
+  this._loaded = false;
+  if (!IsWindows) {
+    if (this.onPlaySubscription != null) {
+      this.onPlaySubscription.remove();
+      this.onPlaySubscription = null;
+      return this;
     }
   }
-  return this;
 };
 
 Sound.prototype.getDuration = function() {
