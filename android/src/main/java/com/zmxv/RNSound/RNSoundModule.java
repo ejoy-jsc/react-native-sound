@@ -242,6 +242,7 @@ public class RNSoundModule extends ReactContextBaseJavaModule implements AudioMa
         }
       }
     });
+
     player.setOnErrorListener(new OnErrorListener() {
       boolean callbackWasCalled = false;
 
@@ -258,6 +259,7 @@ public class RNSoundModule extends ReactContextBaseJavaModule implements AudioMa
         return true;
       }
     });
+    
     player.start();
     setOnPlay(true, key);
   }
