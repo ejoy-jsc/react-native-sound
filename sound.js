@@ -1,13 +1,15 @@
 import ReactNative, { NativeModules } from "react-native";
 
+const resolveAssetSource = require("react-native/Libraries/Image/resolveAssetSource");
+
+const RNSound = NativeModules.RNSound;
 const IsAndroid = RNSound.IsAndroid;
 const IsWindows = RNSound.IsWindows;
-const resolveAssetSource = require("react-native/Libraries/Image/resolveAssetSource");
+
 const eventEmitter = new ReactNative.NativeEventEmitter(RNSound);
 
 let nextKey = 0;
 
-const RNSound = NativeModules.RNSound;
 function isRelativePath(path) {
   return !/^(\/|http(s?)|asset)/.test(path);
 }
