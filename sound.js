@@ -1,23 +1,28 @@
-const ReactNative = require("react-native");
-const RNSound = ReactNative.NativeModules.RNSound;
+import ReactNative, { NativeModules } from "react-native";
+
 const IsAndroid = RNSound.IsAndroid;
 const IsWindows = RNSound.IsWindows;
 const resolveAssetSource = require("react-native/Libraries/Image/resolveAssetSource");
 const eventEmitter = new ReactNative.NativeEventEmitter(RNSound);
 
+let nextKey = 0;
+
+const RNSound = NativeModules.RNSound;
 function isRelativePath(path) {
   return !/^(\/|http(s?)|asset)/.test(path);
 }
 
 // Hash function to compute key from the filename
-function djb2Code(str) {
-  let hash = 5381, i, char;
-  for (i = 0; i < str.length; i++) {
-    char = str.charCodeAt(i);
-    hash = ((hash << 5) + hash) + char; /* hash * 33 + c */
-  }
-  return hash;
-}
+// function djb2Code(str) {
+//   let hash = 5381, i, char;
+//   for (i = 0; i < str.length; i++) {
+//     char = str.charCodeAt(i);
+//     hash = ((hash << 5) + hash) + char; /* hash * 33 + c */
+//   }
+//   return hash;
+// }
+
+
 class Sound {
 
   constructor(filename, basePath, onError, options) {
@@ -34,7 +39,7 @@ class Sound {
     }
 
     this._loaded = false;
-    this._key = asset ? filename : djb2Code(filename); //if the file is an asset, use the asset number as the key
+    this._key = nextKey++;
     this._playing = false;
     this._duration = -1;
     this._numberOfChannels = -1;

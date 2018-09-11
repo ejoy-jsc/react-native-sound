@@ -6,7 +6,7 @@
   "typings": "index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zmxv/react-native-sound.git"
+    "url": "git+https://github.com/nodejsaber/react-native-sound.git"
   },
   "keywords": [
     "react-native",
