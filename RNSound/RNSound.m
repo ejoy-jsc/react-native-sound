@@ -76,10 +76,10 @@
 
 -(void) audioPlayerDidFinishPlaying:(AVAudioPlayer*)player
                        successfully:(BOOL)flag {
-  NSNumber* key = [self keyForPlayer:player];
-  if (key == nil) return;
+  @synchronized(self) {
+    NSNumber* key = [self keyForPlayer:player];
+    if (key == nil) return;
 
-  @synchronized(key) {
     [self setOnPlay:NO forPlayerKey:key];
     RCTResponseSenderBlock callback = [self callbackForKey:key];
     if (callback) {
@@ -252,9 +252,9 @@ RCT_EXPORT_METHOD(release:(nonnull NSNumber*)key) {
   AVAudioPlayer* player = [self playerForKey:key];
   if (player) {
     [player stop];
-    [[self callbackPool] removeObjectForKey:player];
+    [[self callbackPool] removeObjectForKey:key];
     @synchronized([self playerPool]) {
-      [[self playerPool] removeObjectForKey:key];
+    [[self playerPool] removeObjectForKey:key];
     }
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter removeObserver:self];
