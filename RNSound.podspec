@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.name                = "RNSound"
   s.version             = package['version']
   s.summary             = package['description']
-  s.homepage            = "https://github.com/zmxv/react-native-sound"
+  s.homepage            = "https://github.com/nodejsaber/react-native-sound"
   s.license             = package['license']
   s.author              = package['author']
   s.source              = { :git => 'https://github.com/zmxv/react-native-sound.git', :tag => "v#{s.version}" }
@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.dependency 'React/Core'
   
   s.subspec 'Core' do |ss|
-    ss.source_files     = "RNSound/*.{h,m}"
+    ss.source_files     = "ios/RNSound/*.{h,m}"
   end
 
 end
